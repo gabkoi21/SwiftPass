@@ -2,7 +2,8 @@ import React from "react";
 import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-import { login } from "../features/AuthFlow/authSlice";
+// import { login } from "../features/auth/authSlice";
+import { login } from "../features/auth/authActions";
 
 const LoginScreen = () => {
   const [username, setUsername] = React.useState("");
@@ -55,7 +56,7 @@ const LoginScreen = () => {
         }}
       >
         <Text style={{ fontSize: 17 }}>Don't have an account? </Text>
-        <Pressable>
+        <Pressable onPress={() => navigation.navigate("Register")}>
           <Text style={{ fontSize: 17 }}>Register</Text>
         </Pressable>
       </View>

@@ -9,8 +9,14 @@ const Auth = createStackNavigator();
 const AuthStack = () => {
   return (
     <Auth.Navigator
-      initialRouteName="KeyForm"
-      screenOptions={{ headerShown: false }}
+      initialRouteName="Register"
+      screenOptions={{
+        headerShown: false,
+        headerStyle: {
+          elevation: 0,
+          shadowOpacity: 0,
+        },
+      }}
     >
       <Auth.Screen name="KeyForm" component={KeyForm} />
       <Auth.Screen name="Login" component={LoginScreen} />

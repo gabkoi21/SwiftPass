@@ -1,16 +1,13 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_smorest import Api
 from flask_migrate import Migrate
-import secrets
+from flask_cors import CORS  
 import os
+import secrets
 import models
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager 
 from blocklist import BLOCKLIST
-from flask import jsonify
-
-# These are the file from the resources folder
 from db import db
-# from resources.posts import blp as PostsBlueprint
 from resources.user import blp as UsersBlueprint
 
 def create_app(db_url=None):

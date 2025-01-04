@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,29 +8,89 @@ import {
   Pressable,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser } from "../features/auth/authActions";
 
 const RegisterScreen = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const { loading, error, success, userInfo } = useSelector(
+    (state) => state.auth
+  );
+
+  const [formData, setFormData] = useState({
+    fullname: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const handleChange = (name, value) => {
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSignUp = () => {
+    if (formData.password !== formData.confirmPassword) {
+      alert("Password does not match");
+      return;
+    }
+    if (
+      !formData.fullname ||
+      !formData.username ||
+      !formData.password ||
+      !formData.confirmPassword
+    ) {
+      alert("Please fill all fields");
+      return;
+    }
+    dispatch(
+      registerUser({ ...formData, username: formData.username.toLowerCase() })
+    );
+  };
+
+  useEffect(() => {
+    if (success) {
+      navigation.navigate("Login");
+    }
+    if (error) {
+      alert(error);
+    }
+  }, [success, error]);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Register Screen</Text>
 
-      <TextInput style={styles.input} placeholder="Username" />
+      <TextInput
+        style={styles.input}
+        placeholder="Full Name"
+        value={formData.fullname}
+        onChangeText={(text) => handleChange("fullname", text)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Username"
+        value={formData.username}
+        onChangeText={(text) => handleChange("username", text)}
+      />
       <TextInput
         style={styles.input}
         placeholder="Password"
-        keyboardType="email-address"
+        secureTextEntry
+        value={formData.password}
+        onChangeText={(text) => handleChange("password", text)}
       />
       <TextInput
         style={styles.input}
         placeholder="Confirm Password"
         secureTextEntry
+        value={formData.confirmPassword}
+        onChangeText={(text) => handleChange("confirmPassword", text)}
       />
-      <Pressable
-        style={styles.button}
-        onPress={() => navigation.navigate("Login")}
-      >
+      <Pressable style={styles.button} onPress={handleSignUp}>
         <Text style={styles.buttonText}>SignUp</Text>
       </Pressable>
     </View>
@@ -70,6 +130,10 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontSize: 20,
+  },
+  loginButton: {
+    marginTop: 10,
+    backgroundColor: "#007BFF",
   },
 });
 

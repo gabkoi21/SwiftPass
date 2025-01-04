@@ -30,18 +30,13 @@ class UserRegister(MethodView):
         return {"message": "User created successfully."}, 201
     
     
-    
-@blp.route("/refresh")
-class UserRefresh(MethodView):
-    @jwt_required(refresh=True)
-    def post(self):
-        jti = get_jwt_identity()
-        access_token = create_access_token(identity=jti, fresh=False)
-        jti = get_jwt()["jti"]
-        BLOCKLIST.add(jti)
-        return {"access_token": access_token}, 200
-    
-    
+    @blp.arguments(UserSchema)
+    def get(self, user_data):
+        users = UserModel.query.all()
+        return UserSchema(many=True).dump(users)
+
+
+        
 @blp.route("/login")
 class UserLogin(MethodView):
     @blp.arguments(UserLoginSchema)
@@ -64,6 +59,18 @@ class userLogout(MethodView):
         return {"message": "Successfully logged out."}, 200
 
             
+@blp.route("/refresh")
+class UserRefresh(MethodView):
+    @jwt_required(refresh=True)
+    def post(self):
+        jti = get_jwt_identity()
+        access_token = create_access_token(identity=jti, fresh=False)
+        jti = get_jwt()["jti"]
+        BLOCKLIST.add(jti)
+        return {"access_token": access_token}, 200
+    
+    
+    
     
 @blp.route("/user/<int:user_id>")
 class user(MethodView):
