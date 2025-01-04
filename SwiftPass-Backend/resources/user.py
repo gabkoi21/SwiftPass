@@ -57,8 +57,8 @@ class userLogout(MethodView):
         jti = get_jwt_identity()
         BLOCKLIST.add(jti)
         return {"message": "Successfully logged out."}, 200
-
-            
+    
+    
 @blp.route("/refresh")
 class UserRefresh(MethodView):
     @jwt_required(refresh=True)
