@@ -36,6 +36,8 @@ class UserRegister(MethodView):
         return UserSchema(many=True).dump(users)
 
 
+
+
         
 @blp.route("/login")
 class UserLogin(MethodView):
@@ -69,14 +71,14 @@ class UserRefresh(MethodView):
         BLOCKLIST.add(jti)
         return {"access_token": access_token}, 200
     
-@blp.route("/delete")
-@blp.arguments(UserSchema)
-def delete(self, user_data):
-    users = UserModel.query.all()
-    for user in users:
-        db.session.delete(user)
+@blp.route("/delete_all")
+class DeleteAllUsers(MethodView):
+    def delete(self):
+        users = UserModel.query.all()
+        for user in users:
+            db.session.delete(user)
         db.session.commit()
-        return {"message": "All users deleted successfully."}, 201
+        return {"message": "All users deleted successfully."}, 200
     
     
     
@@ -103,7 +105,6 @@ class user(MethodView):
         user = UserModel.query.get_or_404(user_id)
         db.session.delete(user)
         db.session.commit()
-        
         return {"message": "User deleted successfully."}, 201
 
 
