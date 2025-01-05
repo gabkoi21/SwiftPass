@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Feather from "@expo/vector-icons/Feather";
 
 function KeyForm() {
@@ -14,18 +15,54 @@ function KeyForm() {
   const [key, setKey] = useState(true);
   const navigation = useNavigation();
 
-  function handleKeyPress(key) {
-    if (key === "Clear") {
-      setCode("");
-    } else if (key === "Delete") {
-      setCode(code.slice(0, -1));
-    } else {
-      const newCode = code + key;
-      setCode(newCode);
+  async function handleKeyPress(key) {
+    try {
+      if (key === "Clear") {
+        setCode("");
+      } else if (key === "Delete") {
+        setCode(code.slice(0, -1));
+      } else {
+        const newCode = (code + key).trim();
+        setCode(newCode);
 
-      if (newCode.length >= 6) {
-        navigation.navigate("Login");
+        if (newCode.length >= 6) {
+          const savedData = await AsyncStorage.getItem("keyCode");
+
+          if (savedData) {
+            const { key: savedKey } = JSON.parse(savedData);
+
+            // If the saved key matches the entered key, navigate to Login
+            if (savedKey === newCode) {
+              navigation.navigate("Login");
+            } else {
+              // If the entered key doesn't match the saved key, navigate to Register
+              await AsyncStorage.setItem(
+                "keyCode",
+                JSON.stringify({ key: newCode })
+              );
+              navigation.navigate("Register");
+            }
+          } else {
+            // If no saved key exists, save the new key and navigate to Register
+            await AsyncStorage.setItem(
+              "keyCode",
+              JSON.stringify({ key: newCode })
+            );
+            navigation.navigate("Register");
+          }
+        }
       }
+    } catch (error) {
+      console.error("Error handling key press:", error);
+    }
+  }
+
+  async function saveKeyData(code) {
+    try {
+      // Save the key without any expiration logic
+      await AsyncStorage.setItem("keyCode", JSON.stringify({ key: code }));
+    } catch (error) {
+      console.error("Error saving key data:", error);
     }
   }
 
@@ -138,7 +175,6 @@ const styles = StyleSheet.create({
   input: {
     height: 40,
     borderColor: "gray",
-
     borderWidth: 1,
     marginBottom: 20,
     width: 313,

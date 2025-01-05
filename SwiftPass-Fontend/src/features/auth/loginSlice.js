@@ -1,3 +1,4 @@
+// import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { BASE_URL } from "../../Screens/constants";
@@ -13,8 +14,6 @@ export const loginUser = createAsyncThunk(
 
       return { userToken, userInfo };
     } catch (error) {
-      // Detailed error logging
-      // console.error("Login error:", error.response || error.message || error);
       return rejectWithValue(
         error.response?.data?.message || error.message || "An error occurred"
       );
@@ -28,6 +27,7 @@ const initialState = {
   userInfo: null,
   loading: false,
   error: null,
+  logout: false,
   success: false,
   isAuthenticated: false,
 };
@@ -48,12 +48,14 @@ const loginSlice = createSlice({
         state.userToken = payload.userToken;
         state.success = true;
         state.isAuthenticated = true;
+        state.logout = false;
       })
       .addCase(loginUser.rejected, (state, { payload }) => {
         state.loading = false;
         state.error = payload;
         state.success = false;
         state.isAuthenticated = false;
+        state.logout = true;
       });
   },
 });
