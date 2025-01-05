@@ -9,7 +9,7 @@ const Auth = createStackNavigator();
 const AuthStack = () => {
   return (
     <Auth.Navigator
-      initialRouteName="Register"
+      initialRouteName="KeyForm"
       screenOptions={{
         headerShown: false,
         headerStyle: {

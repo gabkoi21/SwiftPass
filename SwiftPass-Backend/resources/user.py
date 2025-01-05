@@ -69,6 +69,16 @@ class UserRefresh(MethodView):
         BLOCKLIST.add(jti)
         return {"access_token": access_token}, 200
     
+@blp.route("/delete")
+@blp.arguments(UserSchema)
+def delete(self, user_data):
+    users = UserModel.query.all()
+    for user in users:
+        db.session.delete(user)
+        db.session.commit()
+        return {"message": "All users deleted successfully."}, 201
+    
+    
     
     
     

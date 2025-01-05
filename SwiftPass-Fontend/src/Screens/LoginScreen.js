@@ -1,68 +1,79 @@
-import React from "react";
-import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
-import { useDispatch } from "react-redux";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-// import { login } from "../features/auth/authSlice";
-import { login } from "../features/auth/authActions";
+import { loginUser } from "../features/auth/loginSlice";
 
 const LoginScreen = () => {
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const dispatch = useDispatch();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const { loading, error, success } = useSelector((state) => state.auth);
+
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
+
+  const handleChange = (name, value) => {
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
   const handleLogin = () => {
-    const userInfo = { user: "John", token: "1234" };
-
-    const inputUserInfo = { user: username.trim(), token: password.trim() };
-
-    if (
-      inputUserInfo.user === userInfo.user &&
-      inputUserInfo.token === userInfo.token
-    ) {
-      dispatch(login(userInfo));
-      try {
-        navigation.navigate("Home");
-      } catch (error) {
-        console.error("Navigation error:", error);
-      }
-    } else {
-      console.error("Invalid username or password");
+    if (!formData.username || !formData.password) {
+      alert("Please fill in all fields");
+      return;
     }
+    dispatch(
+      loginUser({
+        username: formData.username.toLowerCase(),
+        password: formData.password,
+      })
+    )
+      .then((response) => {
+        console.log("Login dispatched:", response);
+      })
+      .catch((err) => {
+        console.error("Error during login:", err);
+      });
   };
+
+  useEffect(() => {
+    if (success) {
+      navigation.navigate("Home");
+    }
+  }, [success]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login Screen</Text>
+      <Text style={styles.title}>Login</Text>
       <TextInput
         style={styles.input}
         placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
+        value={formData.username}
+        onChangeText={(value) => handleChange("username", value)}
       />
       <TextInput
         style={styles.input}
         placeholder="Password"
+        value={formData.password}
+        onChangeText={(value) => handleChange("password", value)}
         secureTextEntry
-        value={password}
-        onChangeText={setPassword}
       />
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          gap: 85,
-          marginBottom: 14,
-        }}
-      >
-        <Text style={{ fontSize: 17 }}>Don't have an account? </Text>
-        <Pressable onPress={() => navigation.navigate("Register")}>
-          <Text style={{ fontSize: 17 }}>Register</Text>
-        </Pressable>
-      </View>
-      <Pressable onPress={handleLogin} style={styles.button}>
+      <Pressable style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </Pressable>
+      {loading && <ActivityIndicator />}
+      {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
 };
@@ -73,7 +84,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 16,
     backgroundColor: "#f5f5f5",
-    marginTop: 60,
+    marginTop: 110,
   },
   title: {
     fontSize: 30,
@@ -94,12 +105,18 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "#04041D",
     padding: 14,
-    borderRadius: 5,
+    borderRadius: 3,
     alignItems: "center",
   },
   buttonText: {
     color: "#fff",
     fontSize: 20,
+  },
+  errorText: {
+    marginTop: 12,
+    color: "red",
+    textAlign: "center",
+    fontSize: 16,
   },
 });
 

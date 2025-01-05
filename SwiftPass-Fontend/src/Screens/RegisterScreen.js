@@ -4,19 +4,18 @@ import {
   Text,
   TextInput,
   Button,
-  StyleSheet,
   Pressable,
+  StyleSheet,
+  ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { registerUser } from "../features/auth/authActions";
+import { registerUser } from "../features/auth/authSlice";
 
 const RegisterScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { loading, error, success, userInfo } = useSelector(
-    (state) => state.auth
-  );
+  const { loading, error, success } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
     fullname: "",
@@ -34,7 +33,7 @@ const RegisterScreen = () => {
 
   const handleSignUp = () => {
     if (formData.password !== formData.confirmPassword) {
-      alert("Password does not match");
+      alert("Passwords do not match");
       return;
     }
     if (
@@ -43,11 +42,16 @@ const RegisterScreen = () => {
       !formData.password ||
       !formData.confirmPassword
     ) {
-      alert("Please fill all fields");
+      alert("Please fill in all fields");
       return;
     }
+    // Dispatch the register action
     dispatch(
-      registerUser({ ...formData, username: formData.username.toLowerCase() })
+      registerUser({
+        fullname: formData.fullname,
+        username: formData.username.toLowerCase(),
+        password: formData.password,
+      })
     );
   };
 
@@ -55,44 +59,42 @@ const RegisterScreen = () => {
     if (success) {
       navigation.navigate("Login");
     }
-    if (error) {
-      alert(error);
-    }
-  }, [success, error]);
+  }, [success]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Register Screen</Text>
-
+      <Text style={styles.title}>Register</Text>
       <TextInput
         style={styles.input}
         placeholder="Full Name"
         value={formData.fullname}
-        onChangeText={(text) => handleChange("fullname", text)}
+        onChangeText={(value) => handleChange("fullname", value)}
       />
       <TextInput
         style={styles.input}
         placeholder="Username"
         value={formData.username}
-        onChangeText={(text) => handleChange("username", text)}
+        onChangeText={(value) => handleChange("username", value)}
       />
       <TextInput
         style={styles.input}
         placeholder="Password"
-        secureTextEntry
         value={formData.password}
-        onChangeText={(text) => handleChange("password", text)}
+        onChangeText={(value) => handleChange("password", value)}
+        secureTextEntry
       />
       <TextInput
         style={styles.input}
         placeholder="Confirm Password"
-        secureTextEntry
         value={formData.confirmPassword}
-        onChangeText={(text) => handleChange("confirmPassword", text)}
+        onChangeText={(value) => handleChange("confirmPassword", value)}
+        secureTextEntry
       />
       <Pressable style={styles.button} onPress={handleSignUp}>
-        <Text style={styles.buttonText}>SignUp</Text>
+        <Text style={styles.buttonText}>Sign Up</Text>
       </Pressable>
+      {loading && <ActivityIndicator />}
+      {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
 };
@@ -131,9 +133,11 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 20,
   },
-  loginButton: {
-    marginTop: 10,
-    backgroundColor: "#007BFF",
+  errorText: {
+    marginTop: 12,
+    color: "red",
+    textAlign: "center",
+    fontSize: 16,
   },
 });
 
