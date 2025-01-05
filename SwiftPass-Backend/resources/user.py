@@ -35,7 +35,7 @@ class UserRegister(MethodView):
         users = UserModel.query.all()
         return UserSchema(many=True).dump(users)
 
-
+        
 @blp.route("/login")
 class UserLogin(MethodView):
     @blp.arguments(UserLoginSchema)
