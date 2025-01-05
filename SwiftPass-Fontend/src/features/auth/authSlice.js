@@ -22,6 +22,7 @@ const initialState = {
   userToken: null,
   error: null,
   success: false,
+  isAuthenticated: false,
 };
 
 const authSlice = createSlice({

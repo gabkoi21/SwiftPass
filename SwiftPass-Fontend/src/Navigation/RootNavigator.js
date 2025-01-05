@@ -1,15 +1,15 @@
-import { useEffect } from "react";
+import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import AuthStack from "./AuthStack";
-import Mystack from "./MyStack";
+import MyStack from "./MyStack";
 
 const RootNavigator = () => {
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const { isAuthenticated } = useSelector((state) => state.login);
 
   return (
     <NavigationContainer>
-      {isAuthenticated ? <Mystack /> : <AuthStack />}
+      {isAuthenticated ? <MyStack /> : <AuthStack />}
     </NavigationContainer>
   );
 };

@@ -14,7 +14,7 @@ import { loginUser } from "../features/auth/loginSlice";
 const LoginScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { loading, error, success } = useSelector((state) => state.auth);
+  const { loading, error, success } = useSelector((state) => state.login);
 
   const [formData, setFormData] = useState({
     username: "",
@@ -48,6 +48,7 @@ const LoginScreen = () => {
   };
 
   useEffect(() => {
+    console.log("Success state changed:", success);
     if (success) {
       navigation.navigate("Home");
     }

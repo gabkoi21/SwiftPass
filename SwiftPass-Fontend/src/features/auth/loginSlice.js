@@ -1,24 +1,21 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { BASE_URL } from "../../Screens/constants";
 
 // Thunk for user login
-const loginUser = createAsyncThunk(
-  "auth/loginUser",
+export const loginUser = createAsyncThunk(
+  "login/loginUser",
   async (userData, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${BASE_URL}/login`, userData);
 
-      // Assuming response.data contains user token and info
       const { userToken, userInfo } = response.data;
-
-      // Save the user token and info to AsyncStorage
-      await AsyncStorage.setItem("userToken", userToken);
-      await AsyncStorage.setItem("userInfo", JSON.stringify(userInfo));
 
       return { userToken, userInfo };
     } catch (error) {
+      // Detailed error logging
+      console.error("Login error:", error.response || error.message || error);
       return rejectWithValue(
         error.response?.data?.message || error.message || "An error occurred"
       );
@@ -26,27 +23,20 @@ const loginUser = createAsyncThunk(
   }
 );
 
-// Initial state
+// initial state
 const initialState = {
-  loading: false,
-  userInfo: null,
   userToken: null,
+  userInfo: null,
+  loading: false,
   error: null,
   success: false,
+  isAuthenticated: false, // Add isAuthenticated state
 };
 
-// Slice
-const authSlice = createSlice({
-  name: "auth",
+const loginSlice = createSlice({
+  name: "login",
   initialState,
-  reducers: {
-    logout: (state) => {
-      state.userInfo = null;
-      state.userToken = null;
-      AsyncStorage.removeItem("userToken");
-      AsyncStorage.removeItem("userInfo");
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.pending, (state) => {
@@ -58,14 +48,16 @@ const authSlice = createSlice({
         state.userInfo = payload.userInfo;
         state.userToken = payload.userToken;
         state.success = true;
+        state.isAuthenticated = true;
       })
       .addCase(loginUser.rejected, (state, { payload }) => {
         state.loading = false;
         state.error = payload;
         state.success = false;
+        state.isAuthenticated = false;
       });
   },
 });
 
-export { loginUser };
-export const { logout } = authSlice.actions;
+export const { logout } = loginSlice.actions;
+export default loginSlice.reducer;
