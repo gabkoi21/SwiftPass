@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { registerUser } from "../features/auth/authSlice";
+import { registerUser } from "../features/auth/registerSlice";
 
 const RegisterScreen = () => {
   const navigation = useNavigation();

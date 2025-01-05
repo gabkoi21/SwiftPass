@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-// import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { BASE_URL } from "../../Screens/constants";
 
@@ -15,7 +14,7 @@ export const loginUser = createAsyncThunk(
       return { userToken, userInfo };
     } catch (error) {
       // Detailed error logging
-      console.error("Login error:", error.response || error.message || error);
+      // console.error("Login error:", error.response || error.message || error);
       return rejectWithValue(
         error.response?.data?.message || error.message || "An error occurred"
       );
@@ -30,7 +29,7 @@ const initialState = {
   loading: false,
   error: null,
   success: false,
-  isAuthenticated: false, // Add isAuthenticated state
+  isAuthenticated: false,
 };
 
 const loginSlice = createSlice({

@@ -56,6 +56,7 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
+      {loading && <ActivityIndicator style={styles.activityIndicator} />}
       <Text style={styles.title}>Login</Text>
       <TextInput
         style={styles.input}
@@ -73,7 +74,7 @@ const LoginScreen = () => {
       <Pressable style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </Pressable>
-      {loading && <ActivityIndicator />}
+      {/* <Text style={styles.text}>{loading && <ActivityIndicator />}</Text> */}
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 16,
     backgroundColor: "#f5f5f5",
-    marginTop: 110,
+    marginBottom: 65,
   },
   title: {
     fontSize: 30,
@@ -118,6 +119,13 @@ const styles = StyleSheet.create({
     color: "red",
     textAlign: "center",
     fontSize: 16,
+  },
+
+  activityIndicator: {
+    marginTop: 45,
+    color: "red",
+    fontSize: 30,
+    fontWeight: "bold",
   },
 });
 
