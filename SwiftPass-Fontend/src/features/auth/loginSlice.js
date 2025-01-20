@@ -1,6 +1,6 @@
-// import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BASE_URL } from "../../Screens/constants";
 
 // Thunk for user login
@@ -10,10 +10,19 @@ export const loginUser = createAsyncThunk(
     try {
       const response = await axios.post(`${BASE_URL}/login`, userData);
 
-      const { userToken, userInfo } = response.data;
+      // Log the response for debugging
+      console.log("Login response:", response.data);
 
-      return { userToken, userInfo };
+      // Destructure both access_token and refresh_token from the response
+      const { access_token, refresh_token } = response.data;
+
+      // Optionally, you can store both tokens in AsyncStorage for persistence
+      await AsyncStorage.setItem("accessToken", access_token);
+      await AsyncStorage.setItem("refreshToken", refresh_token);
+
+      return { accessToken: access_token, refreshToken: refresh_token };
     } catch (error) {
+      console.error("Login error:", error.response?.data || error.message);
       return rejectWithValue(
         error.response?.data?.message || error.message || "An error occurred"
       );
@@ -21,21 +30,34 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-// initial state
+// Initial state
 const initialState = {
-  userToken: null,
   userInfo: null,
   loading: false,
   error: null,
-  logout: false,
-  success: false,
+  accessToken: null,
+  refreshToken: null,
   isAuthenticated: false,
 };
 
 const loginSlice = createSlice({
   name: "login",
   initialState,
-  reducers: {},
+  reducers: {
+    restoreTokens: (state, { payload }) => {
+      state.accessToken = payload.accessToken;
+      state.refreshToken = payload.refreshToken;
+      state.isAuthenticated = !!payload.accessToken;
+    },
+
+    logout: (state) => {
+      state.userInfo = null;
+      state.userToken = null;
+      state.isAuthenticated = false;
+      state.success = false;
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.pending, (state) => {
@@ -44,21 +66,17 @@ const loginSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, { payload }) => {
         state.loading = false;
-        state.userInfo = payload.userInfo;
-        state.userToken = payload.userToken;
-        state.success = true;
+        state.accessToken = payload.accessToken;
+        state.refreshToken = payload.refreshToken;
         state.isAuthenticated = true;
-        state.logout = false;
       })
       .addCase(loginUser.rejected, (state, { payload }) => {
         state.loading = false;
         state.error = payload;
-        state.success = false;
         state.isAuthenticated = false;
-        state.logout = true;
       });
   },
 });
 
-export const { logout } = loginSlice.actions;
+export const { restoreTokens, logout } = loginSlice.actions;
 export default loginSlice.reducer;

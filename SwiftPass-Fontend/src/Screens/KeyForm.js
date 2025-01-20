@@ -66,101 +66,94 @@ function KeyForm() {
     }
   }
 
-  function handlekey() {
-    setKey((prev) => !prev);
-  }
-
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={handlekey}>
-        <TextInput style={styles.input} value={code} editable={false} />
-      </TouchableOpacity>
-      {!key && (
-        <View style={styles.keypad}>
-          <View style={styles.row}>
-            <TouchableOpacity
-              style={styles.key}
-              onPress={() => handleKeyPress("1")}
-            >
-              <Text style={styles.keyText}>1</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.key}
-              onPress={() => handleKeyPress("2")}
-            >
-              <Text style={styles.keyText}>2</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.key}
-              onPress={() => handleKeyPress("3")}
-            >
-              <Text style={styles.keyText}>3</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.row}>
-            <TouchableOpacity
-              style={styles.key}
-              onPress={() => handleKeyPress("4")}
-            >
-              <Text style={styles.keyText}>4</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.key}
-              onPress={() => handleKeyPress("5")}
-            >
-              <Text style={styles.keyText}>5</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.key}
-              onPress={() => handleKeyPress("6")}
-            >
-              <Text style={styles.keyText}>6</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.row}>
-            <TouchableOpacity
-              style={styles.key}
-              onPress={() => handleKeyPress("7")}
-            >
-              <Text style={styles.keyText}>7</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.key}
-              onPress={() => handleKeyPress("8")}
-            >
-              <Text style={styles.keyText}>8</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.key}
-              onPress={() => handleKeyPress("9")}
-            >
-              <Text style={styles.keyText}>9</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.row}>
-            <TouchableOpacity
-              style={[styles.key, styles.keyColor]}
-              onPress={() => handleKeyPress("Clear")}
-            >
-              <Text style={styles.keyText}></Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.key}
-              onPress={() => handleKeyPress("0")}
-            >
-              <Text style={styles.keyText}>0</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.key, styles.keyColor]}
-              onPress={() => handleKeyPress("Delete")}
-            >
-              <Text style={styles.keyText}>
-                <Feather name="delete" size={24} color="black" />
-              </Text>
-            </TouchableOpacity>
-          </View>
+      <TextInput style={styles.input} value={code} editable={false} />
+
+      <View style={styles.keypad}>
+        <View style={styles.row}>
+          <TouchableOpacity
+            style={styles.key}
+            onPress={() => handleKeyPress("1")}
+          >
+            <Text style={styles.keyText}>1</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.key}
+            onPress={() => handleKeyPress("2")}
+          >
+            <Text style={styles.keyText}>2</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.key}
+            onPress={() => handleKeyPress("3")}
+          >
+            <Text style={styles.keyText}>3</Text>
+          </TouchableOpacity>
         </View>
-      )}
+        <View style={styles.row}>
+          <TouchableOpacity
+            style={styles.key}
+            onPress={() => handleKeyPress("4")}
+          >
+            <Text style={styles.keyText}>4</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.key}
+            onPress={() => handleKeyPress("5")}
+          >
+            <Text style={styles.keyText}>5</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.key}
+            onPress={() => handleKeyPress("6")}
+          >
+            <Text style={styles.keyText}>6</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.row}>
+          <TouchableOpacity
+            style={styles.key}
+            onPress={() => handleKeyPress("7")}
+          >
+            <Text style={styles.keyText}>7</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.key}
+            onPress={() => handleKeyPress("8")}
+          >
+            <Text style={styles.keyText}>8</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.key}
+            onPress={() => handleKeyPress("9")}
+          >
+            <Text style={styles.keyText}>9</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.row}>
+          <TouchableOpacity
+            style={[styles.key, styles.keyColor]}
+            onPress={() => handleKeyPress("Clear")}
+          >
+            <Text style={styles.keyText}></Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.key}
+            onPress={() => handleKeyPress("0")}
+          >
+            <Text style={styles.keyText}>0</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.key, styles.keyColor]}
+            onPress={() => handleKeyPress("Delete")}
+          >
+            <Text style={styles.keyText}>
+              <Feather name="delete" size={24} color="black" />
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 }

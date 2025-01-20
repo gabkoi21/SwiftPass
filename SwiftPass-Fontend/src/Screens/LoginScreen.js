@@ -15,7 +15,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const LoginScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { loading, error, success, userInfo } = useSelector(
+
+  const { loading, error, success, userInfo, userToken } = useSelector(
     (state) => state.login
   );
 
@@ -31,21 +32,16 @@ const LoginScreen = () => {
     });
   };
 
-  // Save user info to AsyncStorage when success is true
   useEffect(() => {
-    const saveUserInfoToStorage = async () => {
-      try {
-        if (success && userInfo) {
-          await AsyncStorage.setItem("userInfor", JSON.stringify(userInfo));
-          console.log("User information saved to AsyncStorage:", userInfo);
-        }
-      } catch (error) {
-        console.error("Error saving user information to AsyncStorage:", error);
-      }
-    };
+    if (success && userInfo && userToken) {
+      // Save tokens in AsyncStorage for persistence
+      AsyncStorage.setItem("accessToken", userToken); // or access_token
+      AsyncStorage.setItem("userInfo", JSON.stringify(userInfo));
 
-    saveUserInfoToStorage();
-  }, [success, userInfo]);
+      console.log("User data:", { userInfo, userToken });
+      navigation.navigate("Home");
+    }
+  }, [success, userInfo, userToken, navigation]);
 
   const handleLogin = () => {
     if (!formData.username || !formData.password) {
@@ -53,44 +49,13 @@ const LoginScreen = () => {
       return;
     }
 
-    console.log("Attempting to log in with:", formData);
-
     dispatch(
       loginUser({
         username: formData.username.toLowerCase(),
         password: formData.password,
       })
-    )
-      .then((response) => {
-        console.log("Login dispatched:", response);
-      })
-      .catch((err) => {
-        console.error("Error during login:", err);
-      });
+    );
   };
-
-  // Check for existing user info in AsyncStorage
-  useEffect(() => {
-    const checkUserLogin = async () => {
-      try {
-        const storedUserInfo = await AsyncStorage.getItem("userInfor");
-        if (storedUserInfo) {
-          console.log(
-            "User found in AsyncStorage:",
-            JSON.parse(storedUserInfo)
-          );
-          navigation.navigate("Home");
-        }
-      } catch (error) {
-        console.error(
-          "Error retrieving user information from AsyncStorage:",
-          error
-        );
-      }
-    };
-
-    checkUserLogin();
-  }, []);
 
   return (
     <View style={styles.container}>
